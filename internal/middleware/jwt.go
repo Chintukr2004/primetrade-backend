@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"context"
 	"net/http"
 	"strings"
 	"time"
@@ -30,7 +31,7 @@ func GenerateJWT(userID int, role string) (string, error) {
 	return token.SignedString(jwtKey)
 }
 
-func Authentica(next http.HandlerFunc) http.HandlerFunc {
+func Authenticate(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		authHeader := r.Header.Get("Authorization")
 		if authHeader == "" {
@@ -47,6 +48,7 @@ func Authentica(next http.HandlerFunc) http.HandlerFunc {
 			http.Error(w, "Invalid token", http.StatusUnauthorized)
 			return
 		}
-		next.ServeHTTP(w, r)
+		ctx := context.WithValue(r.Context(), "user_id", claims.UserID)
+		next.ServeHTTP(w, r.WithContext(ctx))
 	}
 }
