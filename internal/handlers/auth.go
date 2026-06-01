@@ -3,6 +3,7 @@ package handlers
 import (
 	"database/sql"
 	"encoding/json"
+	"log"
 	"net/http"
 	"primetrade-backend/internal/database"
 	"primetrade-backend/internal/middleware"
@@ -62,6 +63,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	token, err := middleware.GenerateJWT(user.ID, user.Role)
 	if err != nil {
+		log.Println("JWT GENERATION ERROR:", err)
 		http.Error(w, "Error generating token", http.StatusInternalServerError)
 		return
 	}

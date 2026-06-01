@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"primetrade-backend/internal/database"
 	"primetrade-backend/internal/models"
@@ -23,6 +24,7 @@ func CreateTask(w http.ResponseWriter, r *http.Request) {
 	).Scan(&task.ID, &task.CreatedAt)
 
 	if err != nil {
+		log.Println("TASK CREATION ERROR:", err)
 		http.Error(w, "Error creating task", http.StatusInternalServerError)
 		return
 	}

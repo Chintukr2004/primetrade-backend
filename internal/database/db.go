@@ -13,7 +13,8 @@ var DB *sql.DB
 func ConnectDB() {
 	dsn := "host=localhost port=5432 user=postgres password=1234 dbname=intern_db sslmode=disable"
 
-	DB, err := sql.Open("postgres", dsn)
+	var err error
+	DB, err = sql.Open("postgres", dsn)
 	if err != nil {
 		log.Fatalf("Error opening database: %v", err)
 	}

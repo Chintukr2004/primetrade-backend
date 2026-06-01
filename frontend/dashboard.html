@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrimeTrade - Dashboard</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f9; margin: 0; padding: 20px; }
+        .header { display: flex; justify-content: space-between; align-items: center; background: white; padding: 15px 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); max-width: 600px; margin: auto; }
+        input[type="text"] { width: calc(100% - 110px); padding: 10px; margin-right: 10px; border: 1px solid #ccc; border-radius: 4px; }
+        button { padding: 10px 15px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #218838; }
+        .logout-btn { background: #dc3545; }
+        .logout-btn:hover { background: #c82333; }
+        .task-list { list-style: none; padding: 0; }
+        .task-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #eee; }
+        .task-actions button { margin-left: 5px; padding: 5px 10px; font-size: 0.9em; }
+        .btn-update { background: #ffc107; color: black; }
+        .btn-delete { background: #dc3545; }
+        .completed { text-decoration: line-through; color: gray; }
+        #error-msg { color: red; margin-bottom: 10px; font-weight: bold; text-align: center; }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h2>Secure Dashboard</h2>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+</div>
+
+<div class="container">
+    <div id="error-msg"></div>
+    
+    <form id="task-form">
+        <input type="text" id="task-title" placeholder="New Task Title..." required>
+        <button type="submit">Add Task</button>
+    </form>
+
+    <ul class="task-list" id="task-list">
+        </ul>
+</div>
+
+<script>
+    const token = localStorage.getItem('token');
+    if (!token) {
+        window.location.href = 'index.html'; // Kick out unauthenticated users
+    }
+
+    const API_URL = 'http://localhost:8080/api/v1/tasks';
+    const taskList = document.getElementById('task-list');
+    const taskForm = document.getElementById('task-form');
+    const errorMsg = document.getElementById('error-msg');
+
+    // Reusable fetch function with Authorization header
+    async function apiRequest(endpoint, method = 'GET', body = null) {
+        const options = {
+            method,
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        };
+        if (body) options.body = JSON.stringify(body);
+
+        const response = await fetch(API_URL + endpoint, options);
+        if (response.status === 401) {
+            logout(); // Token expired or invalid
+        }
+        
+        // Handle empty responses (like 204 No Content or successful delete)
+        const text = await response.text();
+        return text ? JSON.parse(text) : {};
+    }
+
+    // 1. READ: Fetch all tasks
+    async function fetchTasks() {
+        errorMsg.innerText = '';
+        try {
+            const tasks = await apiRequest('');
+            taskList.innerHTML = ''; // Clear list
+            
+            if (tasks.length === 0) {
+                taskList.innerHTML = '<p style="text-align:center; color:gray;">No tasks yet. Create one!</p>';
+                return;
+            }
+
+            tasks.forEach(task => {
+                const li = document.createElement('li');
+                li.className = 'task-item';
+                const isCompleted = task.status === 'completed';
+                
+                li.innerHTML = `
+                    <span class="${isCompleted ? 'completed' : ''}">${task.title} [${task.status}]</span>
+                    <div class="task-actions">
+                        <button class="btn-update" onclick="updateTask(${task.id}, '${isCompleted ? 'pending' : 'completed'}')">
+                            ${isCompleted ? 'Mark Pending' : 'Complete'}
+                        </button>
+                        <button class="btn-delete" onclick="deleteTask(${task.id})">Delete</button>
+                    </div>
+                `;
+                taskList.appendChild(li);
+            });
+        } catch (error) {
+            errorMsg.innerText = "Error loading tasks.";
+            console.error(error);
+        }
+    }
+
+    // 2. CREATE: Add a new task
+    taskForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const titleInput = document.getElementById('task-title');
+        try {
+            await apiRequest('', 'POST', { title: titleInput.value });
+            titleInput.value = '';
+            fetchTasks(); // Reload the list
+        } catch (error) {
+            errorMsg.innerText = "Error creating task.";
+        }
+    });
+
+    // 3. UPDATE: Change status
+    async function updateTask(id, newStatus) {
+        try {
+            await apiRequest(`/${id}`, 'PUT', { status: newStatus });
+            fetchTasks();
+        } catch (error) {
+            errorMsg.innerText = "Error updating task.";
+        }
+    }
+
+    // 4. DELETE: Remove task
+    async function deleteTask(id) {
+        if (!confirm('Are you sure you want to delete this task?')) return;
+        try {
+            await apiRequest(`/${id}`, 'DELETE');
+            fetchTasks();
+        } catch (error) {
+            errorMsg.innerText = "Error deleting task.";
+        }
+    }
+
+    // Logout function
+    function logout() {
+        localStorage.removeItem('token');
+        window.location.href = 'index.html';
+    }
+
+    // Initial load
+    fetchTasks();
+</script>
+
+</body>
+</html>

@@ -9,7 +9,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-var jwtKey = []byte("secret_key")
+var jwtKey = []byte("your_super_secret_key")
 
 type Claims struct {
 	UserID int    `json:"user_id"`
@@ -27,7 +27,7 @@ func GenerateJWT(userID int, role string) (string, error) {
 			ExpiresAt: jwt.NewNumericDate(expirationTime),
 		},
 	}
-	token := jwt.NewWithClaims(jwt.SigningMethodES256, claims)
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString(jwtKey)
 }
 
