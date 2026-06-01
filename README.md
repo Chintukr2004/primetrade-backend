@@ -2,7 +2,7 @@
 
 > **Developed by:** Chintu kumar 
 > **Email:** chintukr1904@gmail.com
-> **GitHub:** [https://github.com/Chintukr2004](https://github.com/Chintukr2004)
+> **GitHub:** https://github.com/Chintukr2004
 
 ![Dashboard Preview](dashboard.png)
 
@@ -36,33 +36,28 @@ CREATE TABLE tasks (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 ```
-2. Run the Backend Server
-Ensure your PostgreSQL credentials in internal/database/db.go match your local environment. Then start the server:
 
-Bash
-
-
+### 2. Run the Backend Server
+Ensure your PostgreSQL credentials in `internal/database/db.go` match your local environment. Then start the server:
+```bash
 go mod tidy
 go run cmd/main.go
-The backend will run on http://localhost:8080.
+```
+The backend will run on `http://localhost:8080`.
 
-3. Run the Frontend
+### 3. Run the Frontend
 To avoid CORS issues when opening local files, serve the frontend folder using a simple HTTP server.
-
-Bash
-
-
+```bash
 cd frontend
 python3 -m http.server 3000
-Visit http://localhost:3000 in your browser.
+```
+Visit `http://localhost:3000` in your browser.
 
-Scalability & Deployment Note
+---
+
+## Scalability & Deployment Note
 To transition this architecture into a highly scalable, production-ready environment, the following strategies would be implemented:
-
-Microservices Architecture: As the application grows, the monolithic structure can be split. The Authentication service and the Task Management service can be decoupled into independent microservices communicating via gRPC or message queues (like RabbitMQ).
-
-Caching (Redis): To reduce database load, a Redis caching layer should be introduced to cache frequently accessed data (e.g., retrieving the user's task list), invalidating the cache only upon PUT or DELETE operations.
-
-Load Balancing: Deploying multiple instances of the Go backend behind a load balancer (like Nginx or AWS ALB) will distribute incoming traffic efficiently and prevent any single point of failure.
-
-Containerization: The application and database should be Dockerized (Dockerfile and docker-compose.yml) to ensure consistent deployment environments and easy orchestration using Kubernetes.
+1.  **Microservices Architecture:** As the application grows, the monolithic structure can be split. The Authentication service and the Task Management service can be decoupled into independent microservices communicating via gRPC or message queues (like RabbitMQ).
+2.  **Caching (Redis):** To reduce database load, a Redis caching layer should be introduced to cache frequently accessed data (e.g., retrieving the user's task list), invalidating the cache only upon `PUT` or `DELETE` operations.
+3.  **Load Balancing:** Deploying multiple instances of the Go backend behind a load balancer (like Nginx or AWS ALB) will distribute incoming traffic efficiently and prevent any single point of failure.
+4.  **Containerization:** The application and database should be Dockerized (`Dockerfile` and `docker-compose.yml`) to ensure consistent deployment environments and easy orchestration using Kubernetes.
