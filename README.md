@@ -1,5 +1,11 @@
 # PrimeTrade - Secure Backend API & Dashboard
 
+> **Developed by:** [Chintu kumar] 
+> **Email:** [chintukr1904@gmail.com]
+> **GitHub:** [https://github.com/Chintukr2004]
+
+![Dashboard Preview](dashboard.png)
+
 A scalable RESTful API built with Go and PostgreSQL, featuring JWT-based authentication, role-based access control, and complete CRUD operations for task management. Includes a lightweight Vanilla JS frontend to interact with the API.
 
 ## Tech Stack
@@ -29,62 +35,43 @@ CREATE TABLE tasks (
     status VARCHAR(50) DEFAULT 'pending',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-### 2. The Postman Collection (`postman_collection.json`)
-Instead of manually clicking through Postman to export a file, I wrote the JSON format for you. Create a file named `Primetrade_API.postman_collection.json` in your project root and paste this in:
+2. Run the Backend Server
+Ensure your PostgreSQL credentials in internal/database/db.go match your local environment. Then start the server:
 
-```json
-{
-	"info": {
-		"name": "PrimeTrade API",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-	},
-	"item": [
-		{
-			"name": "Auth",
-			"item": [
-				{
-					"name": "Register",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {"mode": "raw","raw": "{\n    \"email\": \"test@example.com\",\n    \"password\": \"password123\"\n}","options": {"raw": {"language": "json"}}},
-						"url": {"raw": "http://localhost:8080/api/v1/register","protocol": "http","host": ["localhost"],"port": "8080","path": ["api","v1","register"]}
-					}
-				},
-				{
-					"name": "Login",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {"mode": "raw","raw": "{\n    \"email\": \"test@example.com\",\n    \"password\": \"password123\"\n}","options": {"raw": {"language": "json"}}},
-						"url": {"raw": "http://localhost:8080/api/v1/login","protocol": "http","host": ["localhost"],"port": "8080","path": ["api","v1","login"]}
-					}
-				}
-			]
-		},
-		{
-			"name": "Tasks",
-			"item": [
-				{
-					"name": "Create Task",
-					"request": {
-						"method": "POST",
-						"header": [{"key": "Authorization","value": "Bearer YOUR_TOKEN_HERE"}],
-						"body": {"mode": "raw","raw": "{\n    \"title\": \"Finish Assignment\"\n}","options": {"raw": {"language": "json"}}},
-						"url": {"raw": "http://localhost:8080/api/v1/tasks","protocol": "http","host": ["localhost"],"port": "8080","path": ["api","v1","tasks"]}
-					}
-				},
-				{
-					"name": "Get Tasks",
-					"request": {
-						"method": "GET",
-						"header": [{"key": "Authorization","value": "Bearer YOUR_TOKEN_HERE"}],
-						"url": {"raw": "http://localhost:8080/api/v1/tasks","protocol": "http","host": ["localhost"],"port": "8080","path": ["api","v1","tasks"]}
-					}
-				}
-			]
-		}
-	]
-}
+Bash
 
-![Dashboard Preview](dashboard.png)
+
+go mod tidy
+go run cmd/main.go
+The backend will run on http://localhost:8080.
+
+3. Run the Frontend
+To avoid CORS issues when opening local files, serve the frontend folder using a simple HTTP server.
+
+Bash
+
+
+cd frontend
+python3 -m http.server 3000
+Visit http://localhost:3000 in your browser.
+
+Scalability & Deployment Note
+To transition this architecture into a highly scalable, production-ready environment, the following strategies would be implemented:
+
+Microservices Architecture: As the application grows, the monolithic structure can be split. The Authentication service and the Task Management service can be decoupled into independent microservices communicating via gRPC or message queues (like RabbitMQ).
+
+Caching (Redis): To reduce database load, a Redis caching layer should be introduced to cache frequently accessed data (e.g., retrieving the user's task list), invalidating the cache only upon PUT or DELETE operations.
+
+Load Balancing: Deploying multiple instances of the Go backend behind a load balancer (like Nginx or AWS ALB) will distribute incoming traffic efficiently and prevent any single point of failure.
+
+Containerization: The application and database should be Dockerized (Dockerfile and docker-compose.yml) to ensure consistent deployment environments and easy orchestration using Kubernetes.
+
+4. Click the green **"Commit changes..."** button to save it.
+
+### Step 2: Create the Postman File
+1. Back on your main repository page, click the **"Add file"** button near the top and select **"Create new file"**.
+2. Name the file exactly this: `Primetrade_API.postman_collection.json`
+3. Paste the large JSON block I gave you earlier (the one that starts with `{ "info": { "name": "PrimeTrade API"...`) into this new file.
+4. Click **"Commit changes..."**.
+
+Once you do those two things, your repository will look incredibly professional, and your README will format perfectly with the image and clean instructions.
