@@ -1,8 +1,8 @@
 # PrimeTrade - Secure Backend API & Dashboard
 
-> **Developed by:** [Chintu kumar] 
-> **Email:** [chintukr1904@gmail.com]
-> **GitHub:** [https://github.com/Chintukr2004]
+> **Developed by:** Chintu kumar 
+> **Email:** chintukr1904@gmail.com
+> **GitHub:** [https://github.com/Chintukr2004](https://github.com/Chintukr2004)
 
 ![Dashboard Preview](dashboard.png)
 
@@ -35,6 +35,7 @@ CREATE TABLE tasks (
     status VARCHAR(50) DEFAULT 'pending',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+```
 2. Run the Backend Server
 Ensure your PostgreSQL credentials in internal/database/db.go match your local environment. Then start the server:
 
@@ -65,13 +66,3 @@ Caching (Redis): To reduce database load, a Redis caching layer should be introd
 Load Balancing: Deploying multiple instances of the Go backend behind a load balancer (like Nginx or AWS ALB) will distribute incoming traffic efficiently and prevent any single point of failure.
 
 Containerization: The application and database should be Dockerized (Dockerfile and docker-compose.yml) to ensure consistent deployment environments and easy orchestration using Kubernetes.
-
-4. Click the green **"Commit changes..."** button to save it.
-
-### Step 2: Create the Postman File
-1. Back on your main repository page, click the **"Add file"** button near the top and select **"Create new file"**.
-2. Name the file exactly this: `Primetrade_API.postman_collection.json`
-3. Paste the large JSON block I gave you earlier (the one that starts with `{ "info": { "name": "PrimeTrade API"...`) into this new file.
-4. Click **"Commit changes..."**.
-
-Once you do those two things, your repository will look incredibly professional, and your README will format perfectly with the image and clean instructions.
